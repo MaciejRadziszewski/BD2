@@ -1,0 +1,807 @@
+
+USE [master]
+GO
+/****** Object:  Database [BD2Projekt]    Script Date: 22.11.2021 16:10:53 ******/
+CREATE DATABASE [BD2Projekt]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'BD2Projekt', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\BD2Projekt.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'BD2Projekt_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\BD2Projekt_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+ALTER DATABASE [BD2Projekt] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [BD2Projekt].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [BD2Projekt] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [BD2Projekt] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [BD2Projekt] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [BD2Projekt] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [BD2Projekt] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET RECOVERY FULL 
+GO
+ALTER DATABASE [BD2Projekt] SET  MULTI_USER 
+GO
+ALTER DATABASE [BD2Projekt] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [BD2Projekt] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [BD2Projekt] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [BD2Projekt] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [BD2Projekt] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [BD2Projekt] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'BD2Projekt', N'ON'
+GO
+ALTER DATABASE [BD2Projekt] SET QUERY_STORE = OFF
+GO
+USE [BD2Projekt]
+GO
+/****** Object:  User [Zarzadca]    Script Date: 22.11.2021 16:10:53 ******/
+CREATE USER [Zarzadca] FOR LOGIN [Zarzadca] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [Klient]    Script Date: 22.11.2021 16:10:53 ******/
+CREATE USER [Klient] FOR LOGIN [Klient] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/****** Object:  User [Kierowca]    Script Date: 22.11.2021 16:10:53 ******/
+CREATE USER [Kierowca] FOR LOGIN [Kierowca] WITH DEFAULT_SCHEMA=[dbo]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [Zarzadca]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [Klient]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [Kierowca]
+GO
+/****** Object:  Table [dbo].[Kierowcy]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Kierowcy](
+	[ID_kierowcy] [int] IDENTITY(1,1) NOT NULL,
+	[Imię] [varchar](50) NOT NULL,
+	[Nazwisko] [varchar](100) NOT NULL,
+	[Pesel] [varchar](50) NOT NULL,
+	[Wypłata] [int] NOT NULL,
+	[Rejon] [int] NULL,
+	[Akt_taksówka] [int] NULL,
+ CONSTRAINT [PK__Kierowcy__1A17D2F71C0115FE] PRIMARY KEY CLUSTERED 
+(
+	[ID_kierowcy] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Klienci]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Klienci](
+	[ID_klienta] [int] IDENTITY(1,1) NOT NULL,
+	[Imię] [varchar](100) NOT NULL,
+	[Nazwisko] [varchar](100) NOT NULL,
+	[Nr_telefonu] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_klienta] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Kursy]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Kursy](
+	[ID_kursu] [int] IDENTITY(1,1) NOT NULL,
+	[Początek] [varchar](100) NOT NULL,
+	[Koniec] [varchar](100) NOT NULL,
+	[Dystans_km] [float] NOT NULL,
+	[Status_kursu] [varchar](100) NOT NULL,
+	[Kierowca] [int] NOT NULL,
+	[Klient] [int] NOT NULL,
+	[Taksówka] [int] NOT NULL,
+	[Płatność] [int] NULL,
+ CONSTRAINT [PK__Kursy__9F9FB23AAF1201AC] PRIMARY KEY CLUSTERED 
+(
+	[ID_kursu] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Kursy_Log]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Kursy_Log](
+	[ID_log] [int] IDENTITY(1,1) NOT NULL,
+	[Typ_zmiany] [varchar](50) NOT NULL,
+	[Czas_zmiany] [datetime2](7) NOT NULL,
+	[ID_kursu] [int] NOT NULL,
+ CONSTRAINT [PK__Kursy_Lo__25BD3B936F2AC924] PRIMARY KEY CLUSTERED 
+(
+	[ID_log] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Płatności]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Płatności](
+	[ID_płatności] [int] IDENTITY(1,1) NOT NULL,
+	[Koszt] [float] NOT NULL,
+	[Typ_płatności] [varchar](15) NOT NULL,
+	[Kurs] [int] NOT NULL,
+ CONSTRAINT [PK__Płatnośc__B571604911A8EC48] PRIMARY KEY CLUSTERED 
+(
+	[ID_płatności] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Rejony]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Rejony](
+	[ID_rejonu] [int] IDENTITY(1,1) NOT NULL,
+	[Nazwa_rejonu] [varchar](50) NOT NULL,
+	[Powierzchnia] [int] NOT NULL,
+	[Cena_za_km] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_rejonu] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Taksówki]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Taksówki](
+	[ID_taksówki] [int] IDENTITY(1,1) NOT NULL,
+	[Marka_samochodu] [varchar](100) NOT NULL,
+	[Kolor_samochodu] [varchar](100) NOT NULL,
+	[Nr_rejestracji] [varchar](10) NOT NULL,
+	[Akt_kierowca] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_taksówki] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Zarząd]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Zarząd](
+	[ID_zarządcy] [int] IDENTITY(1,1) NOT NULL,
+	[Imię] [varchar](50) NOT NULL,
+	[Nazwisko] [varchar](100) NOT NULL,
+	[Pesel] [varchar](50) NOT NULL,
+	[Wypłata] [int] NOT NULL,
+	[Zarz_rejon] [int] NULL,
+ CONSTRAINT [PK__Zarząd__7B031DC705962602] PRIMARY KEY CLUSTERED 
+(
+	[ID_zarządcy] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET IDENTITY_INSERT [dbo].[Kierowcy] ON 
+
+INSERT [dbo].[Kierowcy] ([ID_kierowcy], [Imię], [Nazwisko], [Pesel], [Wypłata], [Rejon], [Akt_taksówka]) VALUES (2, N'Maciej', N'Radziszewski', N'129345', 3000, 1, 2)
+SET IDENTITY_INSERT [dbo].[Kierowcy] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Klienci] ON 
+
+INSERT [dbo].[Klienci] ([ID_klienta], [Imię], [Nazwisko], [Nr_telefonu]) VALUES (1, N'Szymon', N'Hutnik', 123435679)
+SET IDENTITY_INSERT [dbo].[Klienci] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Kursy] ON 
+
+INSERT [dbo].[Kursy] ([ID_kursu], [Początek], [Koniec], [Dystans_km], [Status_kursu], [Kierowca], [Klient], [Taksówka], [Płatność]) VALUES (1, N'Reja', N'Sienkiewicza', 50, N'Aktywny', 2, 1, 2, NULL)
+INSERT [dbo].[Kursy] ([ID_kursu], [Początek], [Koniec], [Dystans_km], [Status_kursu], [Kierowca], [Klient], [Taksówka], [Płatność]) VALUES (3, N'Essa', N'Test', 15, N'Aktywny', 2, 1, 2, NULL)
+SET IDENTITY_INSERT [dbo].[Kursy] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Kursy_Log] ON 
+
+INSERT [dbo].[Kursy_Log] ([ID_log], [Typ_zmiany], [Czas_zmiany], [ID_kursu]) VALUES (1, N'Dodanie kursu', CAST(N'2021-11-22T14:23:57.2975846' AS DateTime2), 1)
+INSERT [dbo].[Kursy_Log] ([ID_log], [Typ_zmiany], [Czas_zmiany], [ID_kursu]) VALUES (2, N'Dodanie kursu', CAST(N'2021-11-22T14:29:05.8938396' AS DateTime2), 3)
+SET IDENTITY_INSERT [dbo].[Kursy_Log] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Rejony] ON 
+
+INSERT [dbo].[Rejony] ([ID_rejonu], [Nazwa_rejonu], [Powierzchnia], [Cena_za_km]) VALUES (1, N'Śródmieście', 16, 3)
+INSERT [dbo].[Rejony] ([ID_rejonu], [Nazwa_rejonu], [Powierzchnia], [Cena_za_km]) VALUES (2, N'Krzyki', 54, 2)
+SET IDENTITY_INSERT [dbo].[Rejony] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Taksówki] ON 
+
+INSERT [dbo].[Taksówki] ([ID_taksówki], [Marka_samochodu], [Kolor_samochodu], [Nr_rejestracji], [Akt_kierowca]) VALUES (2, N'Toyota', N'Niebieski', N'DWR-ABCD', 2)
+SET IDENTITY_INSERT [dbo].[Taksówki] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Zarząd] ON 
+
+INSERT [dbo].[Zarząd] ([ID_zarządcy], [Imię], [Nazwisko], [Pesel], [Wypłata], [Zarz_rejon]) VALUES (1, N'Damian', N'Mucha', N'1234567891', 3500, 1)
+SET IDENTITY_INSERT [dbo].[Zarząd] OFF
+GO
+ALTER TABLE [dbo].[Kierowcy]  WITH CHECK ADD  CONSTRAINT [FK_Kierowcy_Rejony] FOREIGN KEY([Rejon])
+REFERENCES [dbo].[Rejony] ([ID_rejonu])
+GO
+ALTER TABLE [dbo].[Kierowcy] CHECK CONSTRAINT [FK_Kierowcy_Rejony]
+GO
+ALTER TABLE [dbo].[Kierowcy]  WITH CHECK ADD  CONSTRAINT [FK_Kierowcy_Taksówki] FOREIGN KEY([Akt_taksówka])
+REFERENCES [dbo].[Taksówki] ([ID_taksówki])
+GO
+ALTER TABLE [dbo].[Kierowcy] CHECK CONSTRAINT [FK_Kierowcy_Taksówki]
+GO
+ALTER TABLE [dbo].[Kursy]  WITH CHECK ADD  CONSTRAINT [FK_Kursy_Kierowcy] FOREIGN KEY([Kierowca])
+REFERENCES [dbo].[Kierowcy] ([ID_kierowcy])
+GO
+ALTER TABLE [dbo].[Kursy] CHECK CONSTRAINT [FK_Kursy_Kierowcy]
+GO
+ALTER TABLE [dbo].[Kursy]  WITH CHECK ADD  CONSTRAINT [FK_Kursy_Klienci] FOREIGN KEY([Klient])
+REFERENCES [dbo].[Klienci] ([ID_klienta])
+GO
+ALTER TABLE [dbo].[Kursy] CHECK CONSTRAINT [FK_Kursy_Klienci]
+GO
+ALTER TABLE [dbo].[Kursy]  WITH CHECK ADD  CONSTRAINT [FK_Kursy_Płatności] FOREIGN KEY([Płatność])
+REFERENCES [dbo].[Płatności] ([ID_płatności])
+GO
+ALTER TABLE [dbo].[Kursy] CHECK CONSTRAINT [FK_Kursy_Płatności]
+GO
+ALTER TABLE [dbo].[Kursy]  WITH CHECK ADD  CONSTRAINT [FK_Kursy_Taksówki] FOREIGN KEY([Taksówka])
+REFERENCES [dbo].[Taksówki] ([ID_taksówki])
+GO
+ALTER TABLE [dbo].[Kursy] CHECK CONSTRAINT [FK_Kursy_Taksówki]
+GO
+ALTER TABLE [dbo].[Płatności]  WITH CHECK ADD  CONSTRAINT [FK_Płatności_Kursy] FOREIGN KEY([Kurs])
+REFERENCES [dbo].[Kursy] ([ID_kursu])
+GO
+ALTER TABLE [dbo].[Płatności] CHECK CONSTRAINT [FK_Płatności_Kursy]
+GO
+ALTER TABLE [dbo].[Taksówki]  WITH CHECK ADD  CONSTRAINT [FK_Taksówki_Kierowcy] FOREIGN KEY([Akt_kierowca])
+REFERENCES [dbo].[Kierowcy] ([ID_kierowcy])
+GO
+ALTER TABLE [dbo].[Taksówki] CHECK CONSTRAINT [FK_Taksówki_Kierowcy]
+GO
+ALTER TABLE [dbo].[Zarząd]  WITH CHECK ADD  CONSTRAINT [FK_Zarząd_Rejon] FOREIGN KEY([Zarz_rejon])
+REFERENCES [dbo].[Rejony] ([ID_rejonu])
+GO
+ALTER TABLE [dbo].[Zarząd] CHECK CONSTRAINT [FK_Zarząd_Rejon]
+GO
+/****** Object:  StoredProcedure [dbo].[dodajKierowce]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[dodajKierowce]
+@Imię varchar(100),
+@Nazwisko varchar(100),
+@Pesel int,
+@Wypłata int,
+@Rejon int,
+@Akt_taksówka int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Kierowcy VALUES(
+	@Imię, 
+	@Nazwisko, 
+	@Pesel,
+	@Wypłata,
+	@Rejon,
+	@Akt_taksówka);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[dodajKlienta]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[dodajKlienta]
+@Imię varchar(100),
+@Nazwisko varchar(100),
+@Nr_telefonu float
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Klienci VALUES(
+	@Imię, 
+	@Nazwisko, 
+	@Nr_telefonu);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[dodajKurs]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[dodajKurs]
+@Początek varchar(100),
+@Koniec varchar(100),
+@Dystans_km float,
+@Status_kursu varchar(100),
+@Kierowca int,
+@Klient int,
+@Taksówka int,
+@Płatność int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Kursy(Początek, Koniec, Dystans_km, Status_kursu, Kierowca, Klient,
+	Taksówka, Płatność) 
+	VALUES (@Początek, @Koniec, @Dystans_km, @Status_kursu,
+	@Kierowca, @Klient, @Taksówka, @Płatność);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[dodajPlatnosc]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[dodajPlatnosc]
+	@Kurs int,
+	@Dystans_km float,
+	@Cena_za_km float, 
+	@Typ_płatności varchar(15)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Płatności(Kurs, Koszt, Typ_płatności)
+	VALUES(
+	@Kurs,
+	@Dystans_km*@Cena_za_km,
+	@Typ_płatności
+	);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[dodajTaksowke]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[dodajTaksowke]
+@Marka_samochodu varchar(100),
+@Kolor_samochodu varchar(100),
+@Nr_rejestracji varchar(10),
+@Akt_kierowca int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Taksówki VALUES(
+	@Marka_samochodu, 
+	@Kolor_samochodu,
+	@Nr_rejestracji,
+	@Akt_kierowca
+	);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[edytujKierowce]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[edytujKierowce]
+@ID_kierowcy int,
+@Imię varchar(100),
+@Nazwisko varchar(100),
+@Pesel int,
+@Wypłata int,
+@Rejon int,
+@Akt_taksówka int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Kierowcy SET
+	Imię = @Imię, 
+	Nazwisko = @Nazwisko, 
+	Pesel = @Pesel,
+	Wypłata = @Wypłata,
+	Rejon = @Rejon,
+	Akt_taksówka = @Akt_taksówka
+	WHERE ID_kierowcy = @ID_kierowcy;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[edytujKlienta]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[edytujKlienta]
+@ID_klienta int = 0,
+@Imię varchar(100),
+@Nazwisko varchar(100),
+@Nr_telefonu float
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Klienci SET
+	Imię = @Imię, 
+	Nazwisko = @Nazwisko, 
+	Nr_telefonu = @Nr_telefonu
+	WHERE ID_klienta = @ID_klienta;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[edytujKurs]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[edytujKurs]
+@ID_kursu int = 0,
+@Początek varchar(100),
+@Koniec varchar(100),
+@Dystans_km float,
+@Status_kursu varchar(100),
+@Kierowca int,
+@Klient int,
+@Taksówka int,
+@Płatność int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Kursy SET
+	Początek = @Początek, 
+	Koniec = @Koniec, 
+	Dystans_km = @Dystans_km, 
+	Status_kursu = @Status_kursu,
+	Kierowca = @Kierowca, 
+	Klient = @Klient, 
+	Taksówka = @Taksówka, 
+	Płatność = @Płatność
+	WHERE ID_kursu = @ID_kursu;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[edytujRejon]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[edytujRejon]
+@ID_rejonu varchar(100),
+@Nazwa_rejonu varchar(100),
+@Powierzchnia int,
+@Cena_za_km int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Rejony SET
+	Nazwa_rejonu = @Nazwa_rejonu, 
+	Powierzchnia = @Powierzchnia,
+	Cena_za_km = @Cena_za_km
+	WHERE ID_rejonu = @ID_rejonu;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[edytujTaksowke]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[edytujTaksowke]
+@ID_taksówki int,
+@Marka_samochodu varchar(100),
+@Kolor_samochodu varchar(100),
+@Nr_rejestracji varchar(10),
+@Akt_kierowca int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Taksówki SET
+	Marka_samochodu = @Marka_samochodu, 
+	Kolor_samochodu = @Kolor_samochodu,
+	Nr_rejestracji = @Nr_rejestracji,
+	Akt_kierowca = @Akt_kierowca
+	WHERE ID_taksówki = @ID_taksówki;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Kierowca_WyswietlKursy]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Kierowca_WyswietlKursy]
+@ID_kierowcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Kursy WHERE Kursy.Kierowca = @ID_kierowcy;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Kierowcy_WyswietlRejon]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Kierowcy_WyswietlRejon]
+@ID_kierowcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Rejony WHERE dbo.Rejony.ID_rejonu = (Select dbo.Kierowcy.Rejon From dbo.Kierowcy
+															Where dbo.Kierowcy.ID_kierowcy = @ID_kierowcy);
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Kierowcy_WyswietlTaksowke]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Kierowcy_WyswietlTaksowke]
+@ID_kierowcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Taksówki WHERE dbo.Taksówki.Akt_kierowca = @ID_kierowcy;
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Klient_WyswietlKursy]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Klient_WyswietlKursy]
+@ID_klienta int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Kursy WHERE Kursy.Klient = @ID_klienta;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[usunKierowce]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usunKierowce]
+@ID_kierowcy int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DELETE FROM Kierowcy WHERE ID_kierowcy = @ID_kierowcy;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[usunTaksowke]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usunTaksowke]
+@ID_taksówki int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DELETE FROM Taksówki WHERE ID_taksówki = @ID_taksówki;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Zarzadca_WyswietlKierowcow]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Zarzadca_WyswietlKierowcow]
+@ID_zarzadcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Kierowcy WHERE dbo.Kierowcy.Rejon = (Select dbo.Zarząd.Zarz_rejon From dbo.Zarząd
+															WHERE dbo.Zarząd.ID_zarządcy = @ID_zarzadcy);
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Zarzadca_WyswietlKlientow]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Zarzadca_WyswietlKlientow]
+@ID_zarzadcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Klienci
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Zarzadca_WyswietlKursy]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Zarzadca_WyswietlKursy]
+@ID_zarzadcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Kursy WHERE dbo.Kursy.Kierowca = (Select dbo.Kierowcy.ID_kierowcy FROM dbo.Kierowcy
+														 Where dbo.Kierowcy.Rejon = (Select dbo.Rejony.ID_rejonu FROM dbo.Rejony
+																					  Where dbo.Rejony.ID_rejonu = (Select dbo.Zarząd.Zarz_rejon FROM dbo.Zarząd
+																								  					 Where dbo.Zarząd.ID_zarządcy = @ID_zarzadcy)))
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Zarzadca_WyswietlRejon]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Zarzadca_WyswietlRejon]
+@ID_zarzadcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Rejony Where dbo.Rejony.ID_rejonu = (select dbo.Zarząd.Zarz_rejon FROM dbo.Zarząd
+															Where dbo.Zarząd.ID_zarządcy = @ID_zarzadcy);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Zarzadca_WyswietlTaksowki]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Zarzadca_WyswietlTaksowki]
+@ID_zarzadcy int = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT * FROM dbo.Taksówki Where dbo.Taksówki.Akt_kierowca = (select dbo.Kierowcy.ID_kierowcy From dbo.Kierowcy
+																  where dbo.Kierowcy.Rejon = (select dbo.Zarząd.Zarz_rejon FROM dbo.Zarząd
+																							  Where dbo.Zarząd.ID_zarządcy = @ID_zarzadcy));
+END
+GO
+/****** Object:  Trigger [dbo].[Dodanie_kursu]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:        <Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:    <Description,,>
+-- =============================================
+CREATE TRIGGER [dbo].[Dodanie_kursu]
+   ON  [dbo].[Kursy]
+   AFTER INSERT
+AS 
+BEGIN
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON;
+    DECLARE @ID_kursu int
+    Select @ID_kursu = inserted.ID_kursu
+    from inserted
+    INSERT INTO dbo.Kursy_Log(Typ_zmiany, Czas_zmiany, ID_kursu)
+    VALUES('Dodanie kursu', SYSDATETIME(), @ID_kursu);
+END
+GO
+ALTER TABLE [dbo].[Kursy] ENABLE TRIGGER [Dodanie_kursu]
+GO
+/****** Object:  Trigger [dbo].[Edycja_kursu]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:        <Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:    <Description,,>
+-- =============================================
+CREATE TRIGGER [dbo].[Edycja_kursu]
+   ON  [dbo].[Kursy]
+   AFTER UPDATE
+AS 
+BEGIN
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON;
+    DECLARE @ID_kursu int
+    Select @ID_kursu = inserted.ID_kursu
+    from inserted
+    INSERT INTO dbo.Kursy_Log(Typ_zmiany, Czas_zmiany, ID_kursu)
+    VALUES('Edycja kursu', SYSDATETIME(), @ID_kursu);
+END
+GO
+ALTER TABLE [dbo].[Kursy] ENABLE TRIGGER [Edycja_kursu]
+GO
+/****** Object:  Trigger [dbo].[Usuniecie_kursu]    Script Date: 22.11.2021 16:10:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:        <Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:    <Description,,>
+-- =============================================
+CREATE TRIGGER [dbo].[Usuniecie_kursu]
+   ON  [dbo].[Kursy]
+   AFTER DELETE
+AS 
+BEGIN
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON;
+    DECLARE @ID_kursu int
+    Select @ID_kursu = deleted.ID_kursu
+    from deleted
+    INSERT INTO dbo.Kursy_Log(Typ_zmiany, Czas_zmiany, ID_kursu)
+    VALUES('Usunięcie kursu', SYSDATETIME(), @ID_kursu);
+END
+GO
+ALTER TABLE [dbo].[Kursy] ENABLE TRIGGER [Usuniecie_kursu]
+GO
+USE [master]
+GO
+ALTER DATABASE [BD2Projekt] SET  READ_WRITE 
+GO
